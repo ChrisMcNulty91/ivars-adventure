@@ -1,6 +1,7 @@
 export default class Preload extends Phaser.State {
 
   preload() {
+    this.load.image( "protoPlayer", "img/proto-player.png" );
     this.loaderBg = this.add.sprite( this.game.world.centerX, this.game.world.centerY, "loaderBg" );
     this.loaderBar = this.add.sprite( this.game.world.centerX, this.game.world.centerY, "loaderBar" );
     this.loaderBg.anchor.setTo( 0.5 );
@@ -10,6 +11,6 @@ export default class Preload extends Phaser.State {
   }
 
   create() {
-    this.state.start( "Menu" );
+    this.state.start( "Play" );
   }
 }

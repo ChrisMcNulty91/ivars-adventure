@@ -1,124 +1,98 @@
-import Bullet from './bullet';
+import Bullet from "./bullet";
 
 export default class Player extends Phaser.Sprite {
+  constructor( { game, x, y, asset } ) {
+    super( game, x, y, asset, 0 );
 
-    constructor({ game, x, y, asset, frame, health }) {
-        super(game, x, y, asset, frame);
+    this.game = game;
+    this.anchor.setTo( 0.5 );
+    this.ACCELERATION = 800;
+    this.JUMP_SPEED = -1000;
+	  this.FIRING_MODES = [
+      "standard",
+      "rapid",
+      "hi-ex",
+      "ricochet",
+      "hotshot",
+      "ap"
+    ];
 
-        this.game = game;
+    this.currentFiringMode = 0;
 
-        this.anchor.setTo(0.5);
-        this.scale.setTo(0.8);
+    this.game.input.keyboard.addKeyCapture( [
+      Phaser.Keyboard.LEFT,
+      Phaser.Keyboard.RIGHT,
+      Phaser.Keyboard.UP,
+      Phaser.Keyboard.DOWN
+    ] );
 
-        this.health = health;
-        this.maxHealth = health;
+    const MAX_SPEED = 500;
+    const DRAG = 600;
+    const GRAVITY = 2600;
 
-        this.game.physics.arcade.enable(this);
+    this.game.physics.arcade.enable( this, Phaser.Physics.ARCADE );
+    this.game.physics.arcade.gravity.y = GRAVITY;
 
-        this.lastPos = {x, y};
+    this.body.collideWorldBounds = true;
+    this.body.maxVelocity.setTo( MAX_SPEED, MAX_SPEED * 10 );
+    this.body.drag.setTo( DRAG, 0 );
 
-        this.diff = {
-            x: 0,
-            y: 0
-        };
+    var nextKey = this.game.input.keyboard.addKey( Phaser.Keyboard.D );
+    var prevKey = this.game.input.keyboard.addKey( Phaser.Keyboard.A );
 
-        this.bullets = this.game.add.group();
-        this.bullets.enableBody = true;
-        this.bulletSpeed = -500;
+	  let self = this;
 
-        this.shotSound = this.game.add.sound('playerShot');
+    nextKey.onDown.add( function() {
+      self.getNextFiringMode();
+    }, this );
 
-        this.game.input.onDown.add(() => {
-            if (this.alive) {
-                let {x,y} = this.game.input.activePointer.position;
-                this.diff.x = x - this.position.x;
-                this.diff.y = y - this.position.y;
-            }
-        });
+    prevKey.onDown.add( function() {
+      self.getPreviousFiringMode();
+    }, this );
+  }
 
-        this.game.input.onUp.add(() => {
-            if (this.alive) {
-                this.frame = 1;
-            }
-        });
+  update() {
 
+    if ( this.game.input.keyboard.isDown( Phaser.Keyboard.LEFT ) ) {
+      this.body.acceleration.x = -this.ACCELERATION;
+    } else if ( this.game.input.keyboard.isDown( Phaser.Keyboard.RIGHT ) ) {
+      this.body.acceleration.x = this.ACCELERATION;
+    } else {
+      this.body.acceleration.x = 0;
     }
 
-    update() {
+    if ( this.game.input.keyboard.isDown( Phaser.Keyboard.UP ) ) {
+      if ( this.body.onFloor() ) {
+        this.body.velocity.y = this.JUMP_SPEED;
+      }
+    }
+  }
 
-        //this.game.debug.body(this);
+  getNextFiringMode() {
+    let nextMode = this.currentFiringMode + 1;
 
-        if (this.game.input.activePointer.isDown) {
-
-            let { x, y } = this.game.input.activePointer.position;
-
-            let left = x < this.lastPos.x;
-            let right = x > this.lastPos.x;
-            let diff = Math.abs(x - this.lastPos.x);
-
-            this.position.x = x - this.diff.x;
-            this.position.y = y - this.diff.y;
-
-            if (this.position.x < 0.02 * this.game.world.width) {
-                this.position.x = 0.02 * this.game.world.width;
-            }
-
-            if (this.position.x > 0.98 * this.game.world.width) {
-                this.position.x = 0.98 * this.game.world.width;
-            }
-
-            if (this.position.y < 0.09 * this.game.world.height) {
-                this.position.y = 0.09 * this.game.world.height;
-            }
-
-            if (this.position.y > 0.94 * this.game.world.height) {
-                this.position.y = 0.94 * this.game.world.height;
-            }
-
-            if (diff > 3) {
-                if (left) {
-                    this.frame = 0;
-                } else if (right) {
-                    this.frame = 2;
-                }
-            } else {
-                if (this.game.time.elapsedMS >= 16) {
-                    this.frame = 1;
-                }
-            }
-
-
-            this.lastPos.x = x;
-            this.lastPos.y = y;
-        }
+    if ( nextMode > this.FIRING_MODES.length - 1 ) {
+      this.currentFiringMode = 0;
+    } else {
+      this.currentFiringMode = nextMode;
     }
 
-    shoot() {
+    this.displayMode( this.currentFiringMode );
+  }
 
-        this.shotSound.play("",0,0.5);
+  getPreviousFiringMode() {
+    let previousMode = this.currentFiringMode - 1;
 
-        let bullet = this.bullets.getFirstExists(false);
-
-        if (!bullet) {
-            bullet = new Bullet({
-                game: this.game,
-                x: this.x,
-                y: this.top,
-                health: 3,
-                asset: 'bullet',
-                tint: 0x04c112
-            });
-            this.bullets.add(bullet);
-        }
-        else {
-            bullet.reset(this.x, this.top, 3);
-        }
-
-        bullet.body.velocity.y = this.bulletSpeed;
+    if ( previousMode < 0 ) {
+      this.currentFiringMode = 5;
+    } else {
+      this.currentFiringMode = previousMode;
     }
 
-    damage(amount) {
-        super.damage(amount);
-    }
+    this.displayMode( this.currentFiringMode );
+  }
 
+  displayMode( index ) {
+    console.log( "FiringMode: [" + this.FIRING_MODES[ index ] + "]" );
+  }
 }
