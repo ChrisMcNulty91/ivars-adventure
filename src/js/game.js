@@ -1,5 +1,5 @@
 import * as states from "./states";
-const GAME = new Phaser.Game( 460, 320, Phaser.AUTO );
+const GAME = new Phaser.Game( 800, 800, Phaser.AUTO, 'game-container' );
 
 Object.keys( states ).forEach( state => GAME.state.add( state, states[ state ] ) );
 
