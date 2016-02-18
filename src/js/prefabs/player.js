@@ -4,10 +4,18 @@ export default class Player extends Phaser.Sprite {
   constructor( { game, x, y, asset } ) {
     super( game, x, y, asset, 0 );
 
+    //Reference to "this" needed for event object
+	  let self = this;
+
     this.game = game;
     this.anchor.setTo( 0.5 );
+
+    this.SHOT_DELAY = 100;
+    this.BULLET_SPEED = 500;
+    this.NUMBER_OF_BULLETS = 1;
     this.ACCELERATION = 800;
     this.JUMP_SPEED = -800;
+
 	  this.FIRING_MODES = [
       "standard",
       "rapid",
@@ -28,10 +36,10 @@ export default class Player extends Phaser.Sprite {
 
     const MAX_SPEED = 500;
     const DRAG = 600;
-    const GRAVITY = 2600;
+    // const GRAVITY = 2600;
 
     this.game.physics.arcade.enable( this, Phaser.Physics.ARCADE );
-    this.game.physics.arcade.gravity.y = GRAVITY;
+    // this.game.physics.arcade.gravity.y = GRAVITY;
 
     this.body.collideWorldBounds = true;
     this.body.maxVelocity.setTo( MAX_SPEED, MAX_SPEED * 10 );
@@ -41,8 +49,8 @@ export default class Player extends Phaser.Sprite {
     var prevKey = this.game.input.keyboard.addKey( Phaser.Keyboard.Q );
     var fireKey = this.game.input.keyboard.addKey( Phaser.Keyboard.SPACEBAR );
 
-    //Reference to "this" needed for event object
-	  let self = this;
+
+    this.populateBulletPool();
 
     nextKey.onDown.add( function() {
       self.getNextFiringMode();
@@ -52,9 +60,45 @@ export default class Player extends Phaser.Sprite {
       self.getPreviousFiringMode();
     }, this );
 
-    fireKey.onDown.add( function() {
-      self.fire();
-    } );
+  }
+
+  populateBulletPool() {
+    this.bulletPool = this.game.add.group();
+
+    for ( let i = 0; i < this.NUMBER_OF_BULLETS; i++ ) {
+
+      let bullet = this.game.add.sprite( new Bullet( {
+        game: this.game,
+        x: 0,
+        y: 0,
+        asset: "bullet"
+      } ) );
+
+      this.bulletPool.add( bullet );
+      bullet.anchor.setTo( 0.5, 0.5 );
+      this.game.physics.arcade.enable( bullet, Phaser.Physics.ARCADE );
+      bullet.kill();
+    }
+  }
+
+  /**
+   * Normal Fire mode
+   */
+  standardExecution() {
+    if ( this.lastBulletShotAt === undefined ) this.lastBulletShotAt = 0;
+
+    if ( this.game.time.now - this.lastBulletShotAt < this.SHOT_DELAY ) return;
+
+    this.lastBulletShotAt = this.game.time.now;
+    let bullet = this.bulletPool.getFirstDead();
+
+    if ( bullet === null || bullet === undefined ) return;
+
+    bullet.revive();
+    bullet.checkWorldBounds = true;
+    bullet.outOfBoundsKill = true;
+    bullet.reset( this.x + 10, this.y );
+    bullet.body.velocity.x = this.BULLET_SPEED;
   }
 
   update() {
@@ -72,9 +116,14 @@ export default class Player extends Phaser.Sprite {
         this.body.velocity.y = this.JUMP_SPEED;
       }
     }
+
+    if ( this.game.input.keyboard.isDown( Phaser.Keyboard.SPACEBAR ) ) {
+      this.fire();
+    }
   }
 
   fire() {
+    this.standardExecution();
     console.log( "Firing: [" + this.FIRING_MODES[ this.currentFiringMode ] + "]" );
   }
 
