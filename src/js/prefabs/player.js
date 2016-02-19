@@ -42,8 +42,8 @@ export default class Player extends Phaser.Sprite {
     // this.game.physics.arcade.gravity.y = GRAVITY;
 
     this.body.collideWorldBounds = true;
-    this.body.maxVelocity.setTo( MAX_SPEED, MAX_SPEED * 10 );
-    this.body.drag.setTo( DRAG, 0 );
+    // this.body.maxVelocity.setTo( MAX_SPEED, MAX_SPEED * 10 );
+    // this.body.drag.setTo( DRAG, 0 );
 
     var nextKey = this.game.input.keyboard.addKey( Phaser.Keyboard.E );
     var prevKey = this.game.input.keyboard.addKey( Phaser.Keyboard.Q );
@@ -104,16 +104,16 @@ export default class Player extends Phaser.Sprite {
   update() {
 
     if ( this.game.input.keyboard.isDown( Phaser.Keyboard.A ) ) {
-      this.body.acceleration.x = -this.ACCELERATION;
+      this.body.acceleration.x = -200;
     } else if ( this.game.input.keyboard.isDown( Phaser.Keyboard.D ) ) {
-      this.body.acceleration.x = this.ACCELERATION;
+      this.body.acceleration.x = 200;
     } else {
       this.body.acceleration.x = 0;
     }
 
     if ( this.game.input.keyboard.downDuration( Phaser.Keyboard.W, 150 ) ) {
       if ( this.body.onFloor() ) {
-        this.body.velocity.y = this.JUMP_SPEED;
+        this.body.velocity.y = -320;
       }
     }
 

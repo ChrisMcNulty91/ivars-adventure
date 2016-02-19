@@ -1,4 +1,4 @@
-import Player from "../prefabs/player";
+import Dredd from "../prefabs/Dredd";
 import Enemy from "../prefabs/enemy";
 
 export default class Play extends Phaser.State {
@@ -8,7 +8,7 @@ export default class Play extends Phaser.State {
 
     let playerResult = this.findObjectsByType( "player_pos", this.map, 'Objects' );
 
-    this.player = new Player( {
+    this.player = new Dredd( {
       game: this.game,
       x: playerResult[ 0 ].x,
       y: playerResult[ 0 ].y,
@@ -16,7 +16,7 @@ export default class Play extends Phaser.State {
     } );
 
     this.game.stage.addChild( this.player );
-    this.game.camera.follow( this.player );
+    this.game.camera.follow( this.player, Phaser.Camera.FOLLOW_PLATFORMER );
 
   }
 
@@ -37,7 +37,7 @@ export default class Play extends Phaser.State {
     this.map.setCollisionBetween( 1, 2000, true, this.levelLayer );
     this.levelLayer.resizeWorld();
 
-    this.createEnemies();
+    // this.createEnemies();
   }
 
   createEnemies() {
