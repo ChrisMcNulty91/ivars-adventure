@@ -28,7 +28,6 @@ export default class Dredd extends Phaser.Sprite {
       left: game.input.keyboard.addKey( Phaser.Keyboard.A ),
       right: game.input.keyboard.addKey( Phaser.Keyboard.D ),
       jump: game.input.keyboard.addKey( Phaser.Keyboard.W ),
-      shoot: game.input.keyboard.addKey( Phaser.Keyboard.SPACEBAR ),
       nextMode: game.input.keyboard.addKey( Phaser.Keyboard.E ),
       prevMode: game.input.keyboard.addKey( Phaser.Keyboard.Q )
     }
@@ -136,7 +135,7 @@ export default class Dredd extends Phaser.Sprite {
   }
 
   fire() {
-    if ( this.controls.shoot.isDown ) {
+    if ( this.game.input.activePointer.isDown ) {
       this.standardExecution();
     }
   }
