@@ -46,6 +46,9 @@ export default class Dredd extends Phaser.Sprite {
     }, this );
 
     this.populateBulletPool();
+
+    this.game.input.activePointer.x = this.game.width/2;
+    this.game.input.activePointer.y = this.game.height/2;
   }
 
   update() {
@@ -55,8 +58,8 @@ export default class Dredd extends Phaser.Sprite {
 
   populateBulletPool() {
     let numberOfBullets = 0;
-    this.bulletPool = this.game.add.group();
-    this.bulletPool.enableBody = true;
+    this.bulletClip = this.game.add.group();
+
     switch ( this.currentFiringMode ) {
       case 0: numberOfBullets = 1; break;
       case 1: numberOfBullets = 1; break;
@@ -66,17 +69,17 @@ export default class Dredd extends Phaser.Sprite {
       case 5: numberOfBullets = 3; break;
     }
 
-    for ( let i = 0; i < numberOfBullets; i++ ) {
+    for ( let i = 0; i < 1; i++ ) {
 
       //TODO determine the damage dealt and ammo cost based on firing mode
-      let bullet = this.game.add.sprite( new Bullet( {
+      let bullet = this.game.stage.addChild( new Bullet( {
         game: this.game,
         x: 0,
         y: 0,
         asset: "protoPlayer"
       } ) );
 
-      this.bulletPool.add( bullet );
+      this.bulletClip.add( bullet );
       bullet.anchor.setTo( 0.5, 0.5 );
       this.game.physics.arcade.enable( bullet, Phaser.Physics.ARCADE );
       bullet.kill();
@@ -84,34 +87,30 @@ export default class Dredd extends Phaser.Sprite {
   }
 
   standardExecution() {
-    if ( this.lastBulletShotAt === undefined ) this.lastBulletShotAt = 0;
+    if (this.lastBulletShotAt === undefined) {
+      this.lastBulletShotAt = 0;
+    }
 
-    if ( this.game.time.now - this.lastBulletShotAt < 100 ) return;
+    if (this.game.time.now - this.lastBulletShotAt < 100) {
+      return;
+    }
 
     this.lastBulletShotAt = this.game.time.now;
-    let bullet = this.bulletPool.getFirstDead();
 
-    // if ( bullet ) {
-    //   bullet.reset( this.x, this.y );
-    // } else {
-    //   bullet = new Bullet( {
-    //     game: this.game,
-    //     x: this.x,
-    //     y: this.y,
-    //     asset: "protoPlayer"
-    //   } );
-    //   this.bulletPool.add( bullet );
-    // }
-    // if ( bullet === null || bullet === undefined ) return;
-    if ( bullet == null || bullett === undefined ) {
+    var bullet = this.bulletClip.getFirstDead(false);
+
+    if (bullet === null || bullet === undefined) {
       return;
-    } else {
-      bullet.revive();
-      bullet.reset( this.x, this.y );
     }
-    // bullet.checkWorldBounds = true;
-    // bullet.outOfBoundsKill = true;
-    bullet.body.velocity.x = 500;
+
+    bullet.revive();
+    bullet.checkWorldBounds = true;
+    bullet.outOfBoundsKill = true;
+    bullet.reset(this.x, this.y);
+    bullet.rotation = this.rotation;
+
+    bullet.body.velocity.x = Math.cos(bullet.rotation) * 500;
+    bullet.body.velocity.y = Math.sin(bullet.rotation) * 500;
   }
 
   playerMovement() {
@@ -126,6 +125,8 @@ export default class Dredd extends Phaser.Sprite {
     if ( this.controls.jump.isDown ) {
       this.jump();
     }
+
+    this.rotation = this.game.physics.arcade.angleToPointer(this);
   }
 
   jump() {
