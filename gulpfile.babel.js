@@ -7,16 +7,16 @@ requireDir('./tasks/prod');
 
 // Initiate production tasks
 gulp.task('build', () => {
-    sequence('clean:prod',
-        [
-            'audio:prod',
-            'data:prod',
-            'img:prod',
-            'js:prod'
-        ],
-        'html:prod',
-        'rev:prod'
-    );
+  sequence('clean:prod',
+    [
+      'audio:prod',
+      'data:prod',
+      'img:prod',
+        'js:prod'
+    ],
+    'html:prod',
+    'rev:prod'
+  );
 });
 
 // Require development tasks
@@ -24,15 +24,15 @@ requireDir('./tasks/dev');
 
 // Initiate development tasks
 gulp.task('default', () => {
-    sequence('clean:dev',
-        [
-            'audio:dev',
-            'data:dev',
-            'img:dev',
-            'js:dev',
-            'html:dev'
-        ],
-        'watch',
-        'serve'
-    );
+  sequence('clean:dev',
+    [
+      'audio:dev',
+      'data:dev',
+      'img:dev',
+      'js:dev',
+      'html:dev'
+    ],
+    'watch',
+    'serve'
+  );
 });

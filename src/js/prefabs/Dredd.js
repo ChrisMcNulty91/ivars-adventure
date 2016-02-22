@@ -45,9 +45,11 @@ export default class Dredd extends Phaser.Sprite {
       self.getPreviousFiringMode();
     }, this);
 
-    this.controls.fire.onDown.add(() => {
-      self.fire();
-    }, this);
+    if (this.currentFiringMode !== 5) {
+      this.controls.fire.onDown.add(() => {
+        self.fire();
+      }, this);
+    }
 
     this.populateBulletPool();
 
@@ -57,33 +59,40 @@ export default class Dredd extends Phaser.Sprite {
 
   update() {
     this.playerMovement();
+
+    if (this.currentFiringMode === 5) {
+      if (this.controls.fire.isDown) {
+        this.fire();
+      }
+    }
   }
 
   populateBulletPool() {
-    let numberOfBullets = 0;
     this.bulletClip = this.game.add.group();
 
+    let numberOfBullets = 0;
+    let damage = 0;
+
     switch (this.currentFiringMode) {
-      case 0: numberOfBullets = 1; break;
-      case 1: numberOfBullets = 1; break;
-      case 2: numberOfBullets = 1; break;
-      case 3: numberOfBullets = 1; break;
-      case 4: numberOfBullets = 1; break;
-      case 5: numberOfBullets = 3; break;
+      case 0: numberOfBullets = 10; damage = 10; break;
+      case 1: numberOfBullets = 10; damage = 50; break;
+      case 2: numberOfBullets = 10; damage = 10; break;
+      case 3: numberOfBullets = 10; damage = 100; break;
+      case 4: numberOfBullets = 10; damage = 100; break;
+      case 5: numberOfBullets = 3;  damage = 10; break;
     }
 
     for (let i = 0; i < numberOfBullets; i++) {
 
-      //TODO determine the damage dealt and ammo cost based on firing mode
       let bullet = this.game.stage.addChild(new Bullet({
         game: this.game,
         x: 0,
         y: 0,
+        damage: damage,
         asset: "protoPlayer"
       }));
 
       this.bulletClip.add(bullet);
-      bullet.anchor.setTo(0.5, 0.5);
       this.game.physics.arcade.enable(bullet, Phaser.Physics.ARCADE);
       bullet.kill();
     }
@@ -111,6 +120,12 @@ export default class Dredd extends Phaser.Sprite {
     bullet.outOfBoundsKill = true;
     bullet.reset(this.x, this.y);
     bullet.rotation = this.rotation;
+
+    if (this.currentFiringMode === 4) {
+      bullet.body.gravity.y = 500;
+    } else {
+      bullet.body.gravity.y = 0;
+    }
 
     bullet.body.velocity.x = Math.cos(bullet.rotation) * 500;
     bullet.body.velocity.y = Math.sin(bullet.rotation) * 500;

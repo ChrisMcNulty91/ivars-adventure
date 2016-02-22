@@ -24,6 +24,7 @@ export default class Play extends Phaser.State {
     this.game.physics.arcade.collide(this.player, this.levelLayer);
     this.game.physics.arcade.collide(this.enemies, this.levelLayer);
     this.game.physics.arcade.collide(this.player, this.enemies);
+    this.player.bulletClip.forEach(bullet => this.game.physics.arcade.collide(this.levelLayer, bullet, () => { bullet.kill(); }, null, this));
   };
 
   createWorld() {
