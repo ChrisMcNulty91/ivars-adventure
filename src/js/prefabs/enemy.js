@@ -1,77 +1,72 @@
-import Bullet from './bullet';
+/**
+ * A base Enemey class
+ */
+class Enemy extends Phaser.Sprite {
+  constructor(game, x, y, sprite) {
+    super (game, x, y, sprite);
 
-export default class Enemy extends Phaser.Sprite {
+    this.exists = false;
+    this.anchor.setTo(0.5, 0.5);
+    this.game.physics.enable(this);
 
-    constructor({ game, x, y, asset, frame, health, bulletSpeed }) {
-        super(game, x, y, asset, frame);
+    this.body.allowGravity = false;
+    this.body.immovable = true;
 
-        this.game = game;
+    this.maxHealth = 1;
+  }
 
-        this.anchor.setTo(0.5);
-        this.scale.setTo(0.8);
-        this.health = health;
-        this.maxHealth = health;
-        this.game.physics.arcade.enable(this);
+  /**
+   * Local reset method can be overwritten in sub classes
+   *
+   * @param {Number} x the x position of the sprite
+   * @param {Number} y the y position of the sprite
+   */
+  _reset(x, y) {
+    this.reset(x, y);
+    this.health = this.maxHealth;
+    this.exists = true;
+    this.dying = false;
+    this.sleeping = true;
+  }
 
-        this.animations.add('spinning', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 30, true);
-        this.play('spinning');
-
-        this.bullets = this.game.add.group();
-        this.bullets.enableBody = true;
-        this.bulletSpeed = bulletSpeed;
-
-        this.shotSound = this.game.add.sound('enemyShot');
-
+  /**
+   * Local update method can be overwritten in sub classes
+   */
+  _update() {
+    if (!this.exists) {
+      return false;
     }
 
-    update() {
-
-        if (this.position.x < 0.04 * this.game.world.width) {
-            this.position.x = 0.04 * this.game.world.width + 2;
-            this.body.velocity.x *= -1;
-        }
-        else if (this.position.x > 0.96 * this.game.world.width) {
-            this.position.x = 0.96 * this.game.world.width - 2;
-            this.body.velocity.x *= -1;
-        }
-
-        if (this.position.y - this.height / 2 > this.game.world.height) {
-            this.kill();
-        }
+    if(this.sleeping) {
+      return false;
     }
 
-    shoot() {
+    return true;
+  }
 
-        this.shotSound.play("",0,0.5);
-
-        let bullet = this.bullets.getFirstExists(false);
-
-        if (!bullet) {
-            bullet = new Bullet({
-                game: this.game,
-                x: this.x,
-                y: this.bottom,
-                health: 2,
-                asset: 'bullet',
-                tint: 0xff0000
-            });
-            this.bullets.add(bullet);
-        }
-        else {
-            bullet.reset(this.x, this.bottom, 2);
-        }
-
-        bullet.body.velocity.y = this.bulletSpeed;
+  /**
+   * Operations to carry out when the sprite is hit by a projectile
+   *
+   * @param  {Object} bullet The projectile that collides with the sprite
+   */
+  hit(bullet) {
+    if (this.dying) {
+      return;
     }
 
-    damage(amount) {
-        super.damage(amount);
-    }
+    this.health -= bullet.damage;
 
-    reset({ x, y, health, bulletSpeed, speed }) {
-        super.reset(x, y, health);
-        this.bulletSpeed = bulletSpeed;
-        this.body.velocity.x = speed.x;
-        this.body.velocity.y = speed.y;
+    if (this.health < 1) {
+      this.dying = true;
+      this.body.velocity.x = 0;
+      this.body.velocity.y = 0;
+      this.body.allowGravity = false;
     }
+  }
+
+  death() {
+    this.exists = false;
+  }
 }
+
+export default Enemy;

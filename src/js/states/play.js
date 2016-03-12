@@ -1,42 +1,36 @@
-import Dredd from "../prefabs/Dredd";
-import Enemy from "../prefabs/enemy";
+import Ivar from '../prefabs/Ivar';
+import tiledUtil from '../utils/tiledUtil';
 
 export default class Play extends Phaser.State {
 
   create() {
     this.createWorld();
 
-    let playerResult = this.findObjectsByType("player_pos", this.map, 'Objects');
+    let playerResult = tiledUtil.findObjectsByType('player_pos', this.map, 'Objects');
 
-    this.player = new Dredd({
-      game: this.game,
-      x: playerResult[ 0 ].x,
-      y: playerResult[ 0 ].y,
-      asset: "protoPlayer"
-    });
+    this.player = new Ivar(this.game, playerResult[0].x, playerResult[0].y, 'protoPlayer');
 
     this.game.stage.addChild(this.player);
-    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_PLATFORMER);
-
   }
 
   update() {
     this.game.physics.arcade.collide(this.player, this.levelLayer);
     this.game.physics.arcade.collide(this.enemies, this.levelLayer);
     this.game.physics.arcade.collide(this.player, this.enemies);
-    this.player.bulletClip.forEach(bullet => this.game.physics.arcade.collide(this.levelLayer, bullet, () => { bullet.kill(); }, null, this));
-  };
+    this.player.spellTome.forEach(spell => this.game.physics.arcade.collide(this.levelLayer, spell, () => { spell.kill(); }, null, this));
+    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_LOCKON);
+  }
 
   createWorld() {
-    this.map = this.game.add.tilemap("level1");
-    this.map.addTilesetImage("level", "level");
+    this.map = this.game.add.tilemap('level1');
+    this.map.addTilesetImage('level', 'level');
 
-    this.backgroundLayer = this.map.createLayer("Background");
-    this.levelLayer = this.map.createLayer("Level");
+    this.backgroundLayer = this.map.createLayer('Background');
+    this.levelLayer = this.map.createLayer('Level');
 
 
     this.map.setCollisionBetween(1, 2000, true, this.levelLayer);
-    this.levelLayer.resizeWorld();
+    // this.levelLayer.resizeWorld();
 
     // this.createEnemies();
   }
@@ -44,30 +38,11 @@ export default class Play extends Phaser.State {
   createEnemies() {
     this.enemies = this.game.add.physicsGroup();
     this.enemies.enableBody = true;
-    var item;
 
-    let result = this.findObjectsByType("enemy", this.map, "Objects");
+    let result = tiledUtil.findObjectsByType('enemy', this.map, 'Objects');
     result.forEach((element) => {
-      this.createFromTiledObject(element, this.enemies);
+      tiledUtil.createFromTiledObject(element, this.enemies);
     }, this);
 
-  }
-
-  findObjectsByType(type, map, layer) {
-    let result = new Array();
-    map.objects[ layer ].forEach((element) => {
-      if (element.properties.type === type) {
-        result.push(element);
-      }
-    } );
-    return result;
-  }
-
-  createFromTiledObject(element, group) {
-    let sprite = group.create(element.x, element.y, element.properties.sprite);
-
-    Object.keys(element.properties).forEach( (key) => {
-      sprite[ key ] = element.properties[ key ];
-    } );
   }
 }

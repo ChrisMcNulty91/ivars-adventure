@@ -1,20 +1,22 @@
+'use strict';
+
 export default class Boot extends Phaser.State {
 
   preload() {
-    this.game.stage.backgroundColor = "#000";
-    this.game.world.setBounds(0, 0, 800, 800);
-    this.load.image("loaderBg", "img/loader-bg.png");
-    this.load.image("loaderBar", "img/loader-bar.png");
+    this.game.stage.backgroundColor = '#000';
+    this.game.world.setBounds(0, 0, 2560, 960);
+    this.load.image('loaderBg', 'img/loader-bg.png');
+    this.load.image('loaderBar', 'img/loader-bar.png');
   }
 
   create() {
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    
+
     this.scale.pageAlignHorizontally = true;
     this.scale.pageAlignVertically = true;
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.state.start("Preload");
+    this.state.start('Preload');
   }
 
 }

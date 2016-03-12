@@ -1,6 +1,8 @@
+'use strict';
+
 export default class Menu extends Phaser.State {
 
   create() {
-    console.log("Menu");
+    console.log('Menu');
   }
 }

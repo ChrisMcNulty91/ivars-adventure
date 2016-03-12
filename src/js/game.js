@@ -1,6 +1,8 @@
-import * as states from "./states";
-const GAME = new Phaser.Game(800, 800, Phaser.AUTO);
+'use strict';
+import * as states from './states';
 
-Object.keys(states).forEach(state => GAME.state.add(state, states[ state ]));
+const GAME = new Phaser.Game(600, 960, Phaser.AUTO);
 
-GAME.state.start("Boot");
+Object.keys(states).forEach(state => GAME.state.add(state, states[state]));
+
+GAME.state.start('Boot');
