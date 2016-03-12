@@ -41,6 +41,9 @@ class Ivar extends Phaser.Sprite {
       this.cast();
     }, this);
 
+    this.game.stage.addChild(this);
+    this.game.camera.follow(this);
+
     this.populateSpellSlots();
   }
 
@@ -54,13 +57,9 @@ class Ivar extends Phaser.Sprite {
     let numberOfSlots = 10;
 
     for (let i = 0; i < numberOfSlots; i++) {
-      let spell = this.game.stage.addChild(new Spell({
-        game: this.game,
-        x: 0,
-        y: 0,
-        damage: this.spells[this.currentSpell].damage,
-        asset: this.spells[this.currentSpell].sprite
-      }));
+      let spell = this.game.stage.addChild(
+        new Spell(this.game, 0, 0, this.spells[this.currentSpell].sprite,
+          this.spells[this.currentSpell].damage));
 
       this.spellTome.add(spell);
       this.game.physics.arcade.enable(spell, Phaser.Physics.ARCADE);
@@ -86,8 +85,6 @@ class Ivar extends Phaser.Sprite {
     }
 
     spell.revive();
-    spell.checkWorldBounds = true;
-    spell.outOfBoundsKill = true;
     spell.reset(this.x, this.y);
 
     spell.body.velocity.x = 500;
@@ -127,7 +124,7 @@ class Ivar extends Phaser.Sprite {
     let previousSpell = this.currentSpell - 1;
 
     if (previousSpell < 0) {
-      this.currentSpell = 5;
+      this.currentSpell = this.spells.length - 1;
     } else {
       this.currentSpell = previousSpell;
     }

@@ -13,6 +13,8 @@ class Enemy extends Phaser.Sprite {
     this.body.immovable = true;
 
     this.maxHealth = 1;
+
+    this.game.stage.addChild(this);
   }
 
   /**
