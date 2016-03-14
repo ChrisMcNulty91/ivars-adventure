@@ -49,6 +49,7 @@ class Ivar extends Phaser.Sprite {
 
   update() {
     this.playerMovement();
+    this.game.debug.body(this);
   }
 
   populateSpellSlots() {
