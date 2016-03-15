@@ -9,13 +9,17 @@ export default class Play extends Phaser.State {
     let playerResult = tiledUtil.findObjectsByType('player_pos', this.map, 'Objects');
 
     this.player = new Ivar(this.game, playerResult[0].x, playerResult[0].y, 'protoPlayer');
+    this.game.add.existing(this.player);
+    this.game.camera.follow(this.player, Phaser.Camera.FOLLOW_LOCKON);
   }
 
   update() {
     this.game.physics.arcade.collide(this.player, this.levelLayer);
-    this.game.physics.arcade.collide(this.enemies, this.levelLayer);
-    this.game.physics.arcade.collide(this.player, this.enemies);
     this.player.spellTome.forEach(spell => this.game.physics.arcade.collide(this.levelLayer, spell, () => { spell.kill(); }, null, this));
+  }
+
+  render() {
+    this.game.debug.text(this.game.time.fps || '--', 32, 32, '#00FF00');
   }
 
   createWorld() {
@@ -28,7 +32,7 @@ export default class Play extends Phaser.State {
     this.map.setCollisionBetween(1, 2000, true, this.levelLayer);
     this.levelLayer.resizeWorld();
 
-    // this.createEnemies();
+    this.createEnemies();
   }
 
   createEnemies() {

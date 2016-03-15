@@ -1,6 +1,7 @@
 'use strict';
-const TiledUtil = {};
+import Enemy from '../prefabs/Enemy';
 
+const TiledUtil = {};
 /**
  * Loops through a given tilemaps layer and adds all objects with a given identifier
  *
@@ -18,7 +19,7 @@ TiledUtil.findObjectsByType = (key, map, layer) => {
       this.push(object);
     }
   }, result);
-  
+
   return result;
 };
 
@@ -29,7 +30,7 @@ TiledUtil.findObjectsByType = (key, map, layer) => {
  * @param  {Object} group  The Phaser.Group that the sprite belongs to
  */
 TiledUtil.createFromTiledObject = (object, group) => {
-  let sprite = group.create(object.x, object.y, object.properties.sprite);
+  let sprite = group.add(object.x, object.y, object.properties.sprite);
 
   object.properties.map(function(key) {
     sprite[key] = object.properties[key];

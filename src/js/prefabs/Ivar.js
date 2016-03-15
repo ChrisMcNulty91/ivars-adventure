@@ -9,7 +9,7 @@ class Ivar extends Phaser.Sprite {
     this.anchor.setTo(0.5, 0.5);
 
     this.attrs = {
-      moveSpeed: 100,
+      moveSpeed: 400,
       jumpSpeed: -320
     };
 
@@ -41,15 +41,13 @@ class Ivar extends Phaser.Sprite {
       this.cast();
     }, this);
 
-    this.game.stage.addChild(this);
-    this.game.camera.follow(this);
+    this.cursors = game.input.keyboard.createCursorKeys();
 
     this.populateSpellSlots();
   }
 
   update() {
     this.playerMovement();
-    this.game.debug.body(this);
   }
 
   populateSpellSlots() {
@@ -58,7 +56,7 @@ class Ivar extends Phaser.Sprite {
     let numberOfSlots = 10;
 
     for (let i = 0; i < numberOfSlots; i++) {
-      let spell = this.game.stage.addChild(
+      let spell = this.game.add.existing(
         new Spell(this.game, 0, 0, this.spells[this.currentSpell].sprite,
           this.spells[this.currentSpell].damage));
 
@@ -92,15 +90,15 @@ class Ivar extends Phaser.Sprite {
   }
 
   playerMovement() {
-    if (this.controls.left.isDown) {
+    if (this.controls.left.isDown || this.cursors.left.isDown) {
       this.body.velocity.x = -this.attrs.moveSpeed;
-    } else if (this.controls.right.isDown) {
+    } else if (this.controls.right.isDown || this.cursors.right.isDown) {
       this.body.velocity.x = this.attrs.moveSpeed;
     } else {
       this.body.velocity.x = 0;
     }
 
-    if (this.controls.jump.isDown) {
+    if (this.controls.jump.isDown || this.cursors.up.isDown) {
       this.jump();
     }
   }
