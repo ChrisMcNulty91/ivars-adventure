@@ -1,3 +1,5 @@
+'use strict';
+
 import config from '../config.js';
 import gulp from 'gulp';
 

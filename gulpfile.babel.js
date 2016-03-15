@@ -1,3 +1,5 @@
+'use strict';
+
 import gulp from 'gulp';
 import sequence from 'run-sequence';
 import requireDir from 'require-dir';
@@ -12,7 +14,7 @@ gulp.task('build', () => {
       'audio:prod',
       'data:prod',
       'img:prod',
-        'js:prod'
+      'js:prod'
     ],
     'html:prod',
     'rev:prod'
