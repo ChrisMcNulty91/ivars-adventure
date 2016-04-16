@@ -9,8 +9,9 @@ class Ivar extends Phaser.Sprite {
     this.anchor.setTo(0.5, 0.5);
 
     this.attrs = {
-      moveSpeed: 400,
-      jumpSpeed: -320
+      moveSpeed: 200,
+      jumpSpeed: -320,
+      facing: 'RIGHT'
     };
 
     this.spells = spells;
@@ -86,14 +87,20 @@ class Ivar extends Phaser.Sprite {
     spell.revive();
     spell.reset(this.x, this.y);
 
-    spell.body.velocity.x = 500;
+    if (this.attrs.facing === 'LEFT') {
+      spell.body.velocity.x = -500;
+    } else {
+      spell.body.velocity.x = 500;
+    }
   }
 
   playerMovement() {
     if (this.controls.left.isDown || this.cursors.left.isDown) {
       this.body.velocity.x = -this.attrs.moveSpeed;
+      this.attrs.facing = 'LEFT';
     } else if (this.controls.right.isDown || this.cursors.right.isDown) {
       this.body.velocity.x = this.attrs.moveSpeed;
+      this.attrs.facing = 'RIGHT';
     } else {
       this.body.velocity.x = 0;
     }
