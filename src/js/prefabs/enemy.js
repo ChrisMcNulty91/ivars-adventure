@@ -5,16 +5,16 @@ class Enemy extends Phaser.Sprite {
   constructor(game, x, y, sprite) {
     super (game, x, y, sprite);
 
-    this.exists = false;
+    this.exists = true;
     this.anchor.setTo(0.5, 0.5);
     this.game.physics.enable(this);
 
-    this.body.allowGravity = false;
+    this.body.allowGravity = true;
     this.body.immovable = true;
+    this.body.gravity.y = 700;
+    this.body.collideWorldBounds = true;
 
     this.maxHealth = 1;
-
-    this.game.stage.addChild(this);
   }
 
   /**
@@ -52,14 +52,10 @@ class Enemy extends Phaser.Sprite {
    * @param  {Object} bullet The projectile that collides with the sprite
    */
   hit(bullet) {
-    if (this.dying) {
-      return;
-    }
-
     this.health -= bullet.damage;
 
     if (this.health < 1) {
-      this.dying = true;
+      this.death();
       this.body.velocity.x = 0;
       this.body.velocity.y = 0;
       this.body.allowGravity = false;

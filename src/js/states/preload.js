@@ -12,10 +12,9 @@ export default class Preload extends Phaser.State {
 
     this.load.image('level', 'img/fantasy_tiles_by_surt.png');
     this.load.image('protoPlayer', 'img/proto-player.png');
+    this.load.image('enemy', 'img/enemy.png');
     this.load.image('bullet', 'img/bullet.png');
     this.load.tilemap('level1', 'data/proto-level.json', null,  Phaser.Tilemap.TILED_JSON);
-    this.load.image('enemy_1', 'img/proto-player.png');
-    this.load.image('enemy_2', 'img/proto-player.png');
   }
 
   create() {

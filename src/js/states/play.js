@@ -1,5 +1,6 @@
 import Ivar from '../prefabs/Ivar';
 import tiledUtil from '../utils/tiledUtil';
+import Enemy from '../prefabs/Enemy';
 
 export default class Play extends Phaser.State {
 
@@ -15,7 +16,10 @@ export default class Play extends Phaser.State {
 
   update() {
     this.game.physics.arcade.collide(this.player, this.levelLayer);
+    this.game.physics.arcade.collide(this.player, this.enemies);
     this.player.spellTome.forEach(spell => this.game.physics.arcade.collide(this.levelLayer, spell, () => { spell.kill(); }, null, this));
+    this.enemies.forEach(enemy => this.game.physics.arcade.collide(this.levelLayer, enemy));
+    this.enemies.forEach(enemy => this.game.physics.arcade.collide(enemy, this.player.spellTome, this.enemyCollisionHandler, null, this));
   }
 
   render() {
@@ -36,13 +40,28 @@ export default class Play extends Phaser.State {
   }
 
   createEnemies() {
-    this.enemies = this.game.add.physicsGroup();
-    this.enemies.enableBody = true;
+    this.enemies = this.game.add.group();
 
-    let result = tiledUtil.findObjectsByType('enemy', this.map, 'Objects');
+    let result = tiledUtil.findObjectsByType('enemy_pos', this.map, 'Objects');
     result.forEach((element) => {
-      tiledUtil.createFromTiledObject(element, this.enemies);
-    }, this);
+      let enemy = this.game.add.existing(new Enemy(
+        this.game,
+        element.x,
+        element.y,
+        'enemy'
+      ));
 
+      this.enemies.add(enemy);
+      this.game.physics.arcade.enable(enemy, Phaser.Physics.ARCADE);
+    }, this);
+  }
+
+  enemyCollisionHandler(enemy, spell) {
+    enemy.hit(spell);
+    spell.kill();
+  }
+
+  playerCollisionHandler() {
+    this.state.start('Play');
   }
 }

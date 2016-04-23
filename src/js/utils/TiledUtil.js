@@ -1,7 +1,6 @@
 'use strict';
-import Enemy from '../prefabs/Enemy';
-
 const TiledUtil = {};
+
 /**
  * Loops through a given tilemaps layer and adds all objects with a given identifier
  *
