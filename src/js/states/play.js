@@ -16,10 +16,10 @@ export default class Play extends Phaser.State {
 
   update() {
     this.game.physics.arcade.collide(this.player, this.levelLayer);
-    this.game.physics.arcade.collide(this.player, this.enemies);
+    this.game.physics.arcade.collide(this.player, this.enemies, null, this.player.reset, this);
     this.player.spellTome.forEach(spell => this.game.physics.arcade.collide(this.levelLayer, spell, () => { spell.kill(); }, null, this));
-    this.enemies.forEach(enemy => this.game.physics.arcade.collide(this.levelLayer, enemy));
-    this.enemies.forEach(enemy => this.game.physics.arcade.collide(enemy, this.player.spellTome, this.enemyCollisionHandler, null, this));
+    this.enemies.forEach(enemy => this.game.physics.arcade.collide(this.levelLayer, enemy, null, enemy.flipDirection(-1), this));
+    this.enemies.forEach(enemy => this.game.physics.arcade.collide(enemy, this.player.spellTome, enemy.hit , null, this));
   }
 
   render() {
@@ -36,11 +36,11 @@ export default class Play extends Phaser.State {
     this.map.setCollisionBetween(1, 2000, true, this.levelLayer);
     this.levelLayer.resizeWorld();
 
-    this.createEnemies();
+    this.enemies = this.createEnemies();
   }
 
   createEnemies() {
-    this.enemies = this.game.add.group();
+    let enemies = this.game.add.group();
 
     let result = tiledUtil.findObjectsByType('enemy_pos', this.map, 'Objects');
     result.forEach((element) => {
@@ -50,20 +50,34 @@ export default class Play extends Phaser.State {
         element.y,
         'enemy',
         50,
+        1,
         1
       ));
 
-      this.enemies.add(enemy);
+      this.createBoss(enemies);
+      enemies.add(enemy);
       this.game.physics.arcade.enable(enemy, Phaser.Physics.ARCADE);
     }, this);
+
+    return enemies;
   }
 
-  enemyCollisionHandler(enemy, spell) {
-    enemy.hit(spell);
-    spell.kill();
-  }
+  createBoss(group) {
+    let result = tiledUtil.findObjectsByType('boss_pos', this.map, 'Objects');
 
-  playerCollisionHandler() {
-    this.state.start('Play');
+    result.forEach((element) => {
+      let enemy = this.game.add.existing(new Enemy(
+        this.game,
+        element.x,
+        element.y,
+        'naga',
+        50,
+        1,
+        10
+      ));
+
+      group.add(enemy);
+      this.game.physics.arcade.enable(enemy, Phaser.Physics.ARCADE);
+    }, this);
   }
 }

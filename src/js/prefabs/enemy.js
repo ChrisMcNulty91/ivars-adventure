@@ -2,8 +2,8 @@
  * A base Enemey class
  */
 class Enemy extends Phaser.Sprite {
-  constructor(game, x, y, sprite, speed, direction) {
-    super (game, x, y, sprite, speed, direction);
+  constructor(game, x, y, sprite, speed, direction, health) {
+    super (game, x, y, sprite, speed, direction, health);
 
     this.speed = 1 * speed;
     this.exists = true;
@@ -14,13 +14,13 @@ class Enemy extends Phaser.Sprite {
     this.body.gravity.y = 700;
     this.body.collideWorldBounds = true;
 
-    this.maxHealth = 1;
-    this.maxLength = this.x + 32 * 4;
+    this.maxHealth = health;
+    this.pathLength = this.x + 32 * 4;
     this.startX = this.x;
   }
 
   update() {
-    if (this.body.x >= this.maxLength) {
+    if (this.body.x >= this.pathLength) {
       this.hasHitEnd = true;
     } else if (this.body.x <= this.startX) {
       this.hasHitEnd = false;
@@ -78,15 +78,18 @@ class Enemy extends Phaser.Sprite {
    *
    * @param  {Object} bullet The projectile that collides with the sprite
    */
-  hit(bullet) {
-    this.health -= bullet.damage;
-
-    if (this.health < 1) {
-      this.death();
-      this.body.velocity.x = 0;
-      this.body.velocity.y = 0;
-      this.body.allowGravity = false;
+  hit(enemy, bullet) {
+    console.log('BEFORE: ' + enemy.maxHealth);
+    enemy.maxHealth -= bullet.damage;
+    console.log('AFTER: ' + enemy.maxHealth);
+    if (enemy.maxHealth < 1) {
+      enemy.death();
+      enemy.body.velocity.x = 0;
+      enemy.body.velocity.y = 0;
+      enemy.body.allowGravity = false;
     }
+
+    bullet.kill();
   }
 
   death() {
