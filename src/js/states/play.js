@@ -48,7 +48,9 @@ export default class Play extends Phaser.State {
         this.game,
         element.x,
         element.y,
-        'enemy'
+        'enemy',
+        50,
+        1
       ));
 
       this.enemies.add(enemy);

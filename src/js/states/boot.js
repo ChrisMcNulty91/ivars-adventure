@@ -10,7 +10,7 @@ export default class Boot extends Phaser.State {
   create() {
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     this.game.renderer.renderSession.roundPixels = true;
-    this.game.stage.backgroundColor = '#7EC0EE';
+    this.game.stage.backgroundColor = '#604878';
     this.game.world.setBounds(0, 0, 2560, 960);
 
     this.scale.pageAlignHorizontally = true;

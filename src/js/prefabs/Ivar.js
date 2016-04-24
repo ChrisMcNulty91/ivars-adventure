@@ -98,9 +98,11 @@ class Ivar extends Phaser.Sprite {
     if (this.controls.left.isDown || this.cursors.left.isDown) {
       this.body.velocity.x = -this.attrs.moveSpeed;
       this.attrs.facing = 'LEFT';
+      this.flipDirection();
     } else if (this.controls.right.isDown || this.cursors.right.isDown) {
       this.body.velocity.x = this.attrs.moveSpeed;
       this.attrs.facing = 'RIGHT';
+      this.flipDirection();
     } else {
       this.body.velocity.x = 0;
     }
@@ -133,6 +135,14 @@ class Ivar extends Phaser.Sprite {
       this.currentSpell = this.spells.length - 1;
     } else {
       this.currentSpell = previousSpell;
+    }
+  }
+
+  flipDirection() {
+    if (this.attrs.facing === 'LEFT') {
+      this.scale.x = -1;
+    } else {
+      this.scale.x = 1;
     }
   }
 }

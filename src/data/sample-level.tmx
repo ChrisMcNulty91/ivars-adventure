@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-up" width="80" height="30" tilewidth="32" tileheight="32" nextobjectid="19">
+<map version="1.0" orientation="orthogonal" renderorder="right-up" width="80" height="30" tilewidth="32" tileheight="32" nextobjectid="21">
  <tileset firstgid="1" name="level" tilewidth="32" tileheight="32" tilecount="600" columns="30">
   <image source="../../../../../Downloads/coverdisk/tutorials/flip-screen-tilemap/fantasy_tiles_by_surt.png" trans="ff00ff" width="960" height="640"/>
  </tileset>
@@ -81,7 +81,7 @@
   <properties>
    <property name="type" value="player_pos"/>
   </properties>
-  <object id="16" gid="2401" x="129" y="800.667" width="32" height="32">
+  <object id="16" gid="2401" x="128.25" y="851.167" width="32" height="32">
    <properties>
     <property name="type" value="enemy_pos"/>
    </properties>
@@ -89,6 +89,16 @@
   <object id="17" gid="217" x="32.3333" y="671.667" width="32" height="32">
    <properties>
     <property name="type" value="player_pos"/>
+   </properties>
+  </object>
+  <object id="19" gid="2401" x="834" y="892" width="32" height="32">
+   <properties>
+    <property name="type" value="enemy_pos"/>
+   </properties>
+  </object>
+  <object id="20" gid="2401" x="1763" y="862" width="32" height="32">
+   <properties>
+    <property name="type" value="enemy_pos"/>
    </properties>
   </object>
  </objectgroup>
