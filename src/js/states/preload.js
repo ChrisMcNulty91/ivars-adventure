@@ -15,7 +15,13 @@ export default class Preload extends Phaser.State {
     this.load.image('enemy', 'img/enemy.png');
     this.load.image('naga', 'img/naga.png');
     this.load.image('bullet', 'img/bullet.png');
+
+    this.load.audio('hit', 'audio/hit.wav');
+    this.load.audio('jump', 'audio/jump.wav');
+    this.load.audio('spell-shot', 'audio/spell-shot.wav');
+
     this.load.tilemap('level1', 'data/proto-level.json', null,  Phaser.Tilemap.TILED_JSON);
+
   }
 
   create() {

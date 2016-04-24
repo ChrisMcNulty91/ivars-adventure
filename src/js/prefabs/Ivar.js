@@ -60,7 +60,6 @@ class Ivar extends Phaser.Sprite {
       let spell = this.game.add.existing(
         new Spell(this.game, 0, 0, this.spells[this.currentSpell].sprite,
           this.spells[this.currentSpell].damage));
-          console.log(this.spells[this.currentSpell].damage);
       this.spellTome.add(spell);
       this.game.physics.arcade.enable(spell, Phaser.Physics.ARCADE);
       spell.kill();
@@ -68,6 +67,7 @@ class Ivar extends Phaser.Sprite {
   }
 
   cast() {
+    this.game.sound.play('spell-shot');
     if (this.lastSpellCastAt === undefined) {
       this.lastSpellCastAt = 0;
     }
@@ -114,6 +114,7 @@ class Ivar extends Phaser.Sprite {
 
   jump() {
     if (this.body.onFloor()) {
+      this.game.sound.play('jump');
       this.body.velocity.y = this.attrs.jumpSpeed;
     }
   }

@@ -17,9 +17,18 @@ export default class Play extends Phaser.State {
   update() {
     this.game.physics.arcade.collide(this.player, this.levelLayer);
     this.game.physics.arcade.collide(this.player, this.enemies, null, this.player.reset, this);
-    this.player.spellTome.forEach(spell => this.game.physics.arcade.collide(this.levelLayer, spell, () => { spell.kill(); }, null, this));
-    this.enemies.forEach(enemy => this.game.physics.arcade.collide(this.levelLayer, enemy, null, enemy.flipDirection(-1), this));
+
+    this.player.spellTome.forEach((spell) => {
+      this.game.physics.arcade.collide(this.levelLayer, spell, () => { spell.kill(); }, null, this);
+    });
+
+    this.enemies.forEach((enemy) => {
+      this.game.physics.arcade.collide(this.levelLayer, enemy);
+    });
+
     this.enemies.forEach(enemy => this.game.physics.arcade.collide(enemy, this.player.spellTome, enemy.hit , null, this));
+    this.bosses.forEach(boss => this.game.physics.arcade.collide(this.levelLayer, boss));
+    this.bosses.forEach(boss => this.game.physics.arcade.collide(boss, this.player.spellTome, boss.hit , null, this));
   }
 
   render() {
@@ -37,6 +46,7 @@ export default class Play extends Phaser.State {
     this.levelLayer.resizeWorld();
 
     this.enemies = this.createEnemies();
+    this.bosses = this.createBoss();
   }
 
   createEnemies() {
@@ -51,10 +61,9 @@ export default class Play extends Phaser.State {
         'enemy',
         50,
         1,
-        1
+        3
       ));
 
-      this.createBoss(enemies);
       enemies.add(enemy);
       this.game.physics.arcade.enable(enemy, Phaser.Physics.ARCADE);
     }, this);
@@ -62,7 +71,8 @@ export default class Play extends Phaser.State {
     return enemies;
   }
 
-  createBoss(group) {
+  createBoss() {
+    let boss = this.game.add.group();
     let result = tiledUtil.findObjectsByType('boss_pos', this.map, 'Objects');
 
     result.forEach((element) => {
@@ -76,8 +86,10 @@ export default class Play extends Phaser.State {
         10
       ));
 
-      group.add(enemy);
+      boss.add(enemy);
       this.game.physics.arcade.enable(enemy, Phaser.Physics.ARCADE);
     }, this);
+
+    return boss;
   }
 }

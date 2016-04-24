@@ -79,9 +79,9 @@ class Enemy extends Phaser.Sprite {
    * @param  {Object} bullet The projectile that collides with the sprite
    */
   hit(enemy, bullet) {
-    console.log('BEFORE: ' + enemy.maxHealth);
+    this.game.sound.play('hit');
     enemy.maxHealth -= bullet.damage;
-    console.log('AFTER: ' + enemy.maxHealth);
+
     if (enemy.maxHealth < 1) {
       enemy.death();
       enemy.body.velocity.x = 0;

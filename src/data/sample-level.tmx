@@ -107,7 +107,7 @@
     <property name="type" value="enemy_pos"/>
    </properties>
   </object>
-  <object id="45" gid="2402" x="64" y="125" width="64" height="64">
+  <object id="45" gid="2402" x="58.3333" y="127.333" width="64" height="64">
    <properties>
     <property name="type" value="boss_pos"/>
    </properties>
