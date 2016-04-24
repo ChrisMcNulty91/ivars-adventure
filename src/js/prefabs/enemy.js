@@ -19,18 +19,9 @@ class Enemy extends Phaser.Sprite {
     this.startX = this.x;
   }
 
-  update() {
-    if (this.body.x >= this.pathLength) {
-      this.hasHitEnd = true;
-    } else if (this.body.x <= this.startX) {
-      this.hasHitEnd = false;
-    }
-
-    this.enemeyMovement(this.hasHitEnd);
-  }
+  update() {}
 
   enemeyMovement(hasHitEnd) {
-
     if (!hasHitEnd) {
       this.body.velocity.x = this.speed;
       this.flipDirection(1);
@@ -45,42 +36,13 @@ class Enemy extends Phaser.Sprite {
   }
 
   /**
-   * Local reset method can be overwritten in sub classes
-   *
-   * @param {Number} x the x position of the sprite
-   * @param {Number} y the y position of the sprite
-   */
-  // _reset(x, y) {
-  //   this.reset(x, y);
-  //   this.health = this.maxHealth;
-  //   this.exists = true;
-  //   this.dying = false;
-  //   this.sleeping = true;
-  // }
-
-  /**
-   * Local update method can be overwritten in sub classes
-   */
-  // _update() {
-  //   if (!this.exists) {
-  //     return false;
-  //   }
-  //
-  //   if(this.sleeping) {
-  //     return false;
-  //   }
-  //
-  //   return true;
-  // }
-
-  /**
    * Operations to carry out when the sprite is hit by a projectile
    *
    * @param  {Object} bullet The projectile that collides with the sprite
    */
-  hit(enemy, bullet) {
+  hit(enemy, spell) {
     this.game.sound.play('hit');
-    enemy.maxHealth -= bullet.damage;
+    enemy.maxHealth -= spell.damage;
 
     if (enemy.maxHealth < 1) {
       enemy.death();
@@ -89,7 +51,7 @@ class Enemy extends Phaser.Sprite {
       enemy.body.allowGravity = false;
     }
 
-    bullet.kill();
+    spell.kill();
   }
 
   death() {

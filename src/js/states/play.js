@@ -1,6 +1,7 @@
 import Ivar from '../prefabs/Ivar';
 import tiledUtil from '../utils/tiledUtil';
-import Enemy from '../prefabs/Enemy';
+import Zombie from '../prefabs/Zombie';
+import Naga from '../prefabs/Naga';
 
 export default class Play extends Phaser.State {
 
@@ -54,7 +55,7 @@ export default class Play extends Phaser.State {
 
     let result = tiledUtil.findObjectsByType('enemy_pos', this.map, 'Objects');
     result.forEach((element) => {
-      let enemy = this.game.add.existing(new Enemy(
+      let enemy = this.game.add.existing(new Zombie(
         this.game,
         element.x,
         element.y,
@@ -76,7 +77,7 @@ export default class Play extends Phaser.State {
     let result = tiledUtil.findObjectsByType('boss_pos', this.map, 'Objects');
 
     result.forEach((element) => {
-      let enemy = this.game.add.existing(new Enemy(
+      let enemy = this.game.add.existing(new Naga(
         this.game,
         element.x,
         element.y,
